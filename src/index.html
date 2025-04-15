@@ -16,12 +16,17 @@
             <section class="text-center">
               <div class="flex gap-2 mt-4">
                 <input id="cityName" type="text" spellcheck="false" placeholder="Enter a City Name" class="w-full pl-3 border-[0.5px] border-gray-300 rounded-md focus:outline-none focus:border-2 focus:border-blue-500">
-                <button class="bg-blue-500 cursor-pointer px-8 py-2 rounded-md text-white font-bold">Search</button>
+                <button id="searchBtn" class="bg-blue-500 cursor-pointer px-8 py-2 rounded-md text-white font-bold">Search</button>
               </div>
               <p class="text-center text-black mt-1">or</p>
-              <button class="w-full cursor-pointer rounded-md bg-green-400 mt-1 px-8 py-2 text-white font-bold">Use Current Location</button>
+              <button id="locationBtn" class="w-full cursor-pointer rounded-md bg-green-400 mt-1 px-8 py-2 text-white font-bold">Use Current Location</button>
               <div id="error" class="text-red-500 text-center"></div>
             </section>
+
+            <!-- weather information display --------------  -->
+             <section id="main-information" class="mt-4">
+                <h1 class="font-bold text-xl md:text-6xl text-center"></h1>
+             </section>
         </main>
     </div>
 
@@ -30,7 +35,7 @@
       apiKey="a692e3a8f846f51cc3ea078b252d8caa";
 
       function weatherDetailsByCityName(){
-        const city = document.querySelector("#cityName");
+        const city = document.querySelector("#cityName").value.trim();
         if(!city){
           displayError("Plaese enter a city name");
           return;
@@ -38,7 +43,7 @@
         getWeatherData(`https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric`)
       }
 
-      function weatherrDetailByLocation() {
+      function weatherDetailByLocation() {
       if (!navigator.geolocation) {
         showError("Geolocation is not supported by your browser.");
         return;
@@ -46,7 +51,7 @@
       navigator.geolocation.getCurrentPosition(
         position => {
           const { latitude, longitude } = position.coords;
-          fetchWeatherData(`https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=metric`);
+          getWeatherData(`https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=metric`);
         },
         () => displayError("Problem in fetching your location.")
       );
@@ -60,6 +65,8 @@
         })
         .then(data => {
           showWeather(data);
+          console.log(data);
+          console.log(data.list[0].weather[0].main);
         })
         .catch(error => {
           displayError(error.message);
@@ -69,6 +76,22 @@
       function displayError(message){
         document.querySelector("#error").innerHTML = message;
       }
+     const searchBtn = document.querySelector("#searchBtn");
+     const locationBtn = document.querySelector("#locationBtn");
+     searchBtn.addEventListener("click",()=>{
+        weatherDetailsByCityName();
+     });
+     locationBtn.addEventListener("click",()=>{
+      weatherDetailByLocation();
+     })   
+
+     function showWeather(data){
+      document.querySelector("#main-information h1").textContent = `${data.city.name}, ${new Date(data.list[0].dt_txt).toDateString()}`;
+      function changeImage(data){
+        console.log(data.city.name);
+      }
+      changeImage(data);
+     }
     </script>
   </body>
 </html>
