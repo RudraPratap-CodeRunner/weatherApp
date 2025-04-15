@@ -20,7 +20,7 @@
               </div>
               <p class="text-center text-black mt-1">or</p>
               <button class="w-full cursor-pointer rounded-md bg-green-400 mt-1 px-8 py-2 text-white font-bold">Use Current Location</button>
-              <div class="text-red-500 text-center"></div>
+              <div id="error" class="text-red-500 text-center"></div>
             </section>
         </main>
     </div>
@@ -28,13 +28,18 @@
 
     <script>
       apiKey="a692e3a8f846f51cc3ea078b252d8caa";
+
       function weatherDetailsByCityName(){
         const city = document.querySelector("#cityName");
         if(!city){
-          displayError("Plaese entera city name");
+          displayError("Plaese enter a city name");
           return;
         }
         getWeatherData(`https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric`)
+      }
+
+      function displayError(message){
+        document.querySelector("#error").innerHTML = message;
       }
     </script>
   </body>
