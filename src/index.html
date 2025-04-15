@@ -38,6 +38,20 @@
         getWeatherData(`https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric`)
       }
 
+      function getWeatherData(url) {
+      fetch(url)
+        .then(response => {
+          if (!response.ok) throw new Error("Weather data not found.");
+          return response.json();
+        })
+        .then(data => {
+          showWeather(data);
+        })
+        .catch(error => {
+          showError(error.message);
+        });
+       }
+
       function displayError(message){
         document.querySelector("#error").innerHTML = message;
       }
