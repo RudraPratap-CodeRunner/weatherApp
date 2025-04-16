@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="./output.css" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/8fd355cbc5.js" crossorigin="anonymous"></script>
     <!-- <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script> -->
   </head>
   <body class="bg-green-100 min-h-screen">
@@ -15,26 +16,62 @@
             <!-- searchbox-------------- -->
             <section class="text-center">
               <div class="flex gap-2 mt-4">
-                <input id="cityName" type="text" spellcheck="false" placeholder="Enter a City Name" class="w-full pl-3 border-[0.5px] border-gray-300 rounded-md focus:outline-none focus:border-2 focus:border-blue-500">
+                <input id="cityName" type="text" list="recentSearches" spellcheck="false" placeholder="Enter a City Name" class="w-full pl-3 border-[0.5px] border-gray-300 rounded-md focus:outline-none focus:border-2 focus:border-blue-500">
+                <datalist id="recentSearches"></datalist>
                 <button id="searchBtn" class="bg-blue-500 cursor-pointer px-8 py-2 rounded-md text-white font-bold">Search</button>
               </div>
               <p class="text-center text-black mt-1">or</p>
               <button id="locationBtn" class="w-full cursor-pointer rounded-md bg-green-400 mt-1 px-8 py-2 text-white font-bold">Use Current Location</button>
-              <div id="error" class="text-red-500 text-center"></div>
+              <div id="error" class="text-red-500 text-center mt-3"></div>
             </section>
 
             <!-- weather information display --------------  -->
-             <section id="main-information" class="mt-4">
-                <h1 class="font-bold text-xl md:text-6xl text-center"></h1>
+             <section id="main-information" class="mt-4 hidden">
+                <article>
+                  <h1 class="font-bold text-xl md:text-2xl text-center  text-[#6c6a6a]">Kamasin, 233245</h1>
+                  <div>
+                    <img id="mainImg" src="images/clear.png" alt="" class="mx-auto w-20 md:w-28">
+                    <div class="text-center font-semibold text-[#6c6a6a] text-2xl">
+                     <span id="weatherStatus">Clear</span>
+                     <span id="mainTemp">29 .C</span>
+                    </div>
+                    <div class="flex justify-center gap-4 mt-4">
+                      <div>
+                        <i class="fa-solid fa-temperature-half text-[#575555]"></i>
+                        <span class="text-[#6d6c6c] font-semibold">Min Temp : 21°C</span>
+                      </div>
+                      <div>
+                        <i class="fa-solid fa-temperature-three-quarters text-[#575555]"></i>
+                        <span class="text-[#6d6c6c] font-semibold">Max Temp : 21°C</span>
+                      </div>
+                    </div>
+                    <div class="flex justify-center gap-4 mt-2">
+                      <div>
+                        <i class="fa-solid fa-droplet text-[#807979]"></i>
+                        <span class="text-[#6d6c6c] font-semibold">Humidity : 21 %</span>
+                      </div>
+                      <div>
+                        <i class="fa-solid fa-wind ml-1.5 text-[#575555]"></i>
+                        <span class="text-[#6d6c6c] font-semibold">Wind Speed : 21</span>
+                      </div>
+                    </div>
+
+                  </div>
+                </article>
+                
              </section>
         </main>
     </div>
 
 
     <script>
+
+     
+
       apiKey="a692e3a8f846f51cc3ea078b252d8caa";
 
       function weatherDetailsByCityName(){
+        document.querySelector("#error").innerHTML = "";
         const city = document.querySelector("#cityName").value.trim();
         if(!city){
           displayError("Plaese enter a city name");
@@ -44,6 +81,7 @@
       }
 
       function weatherDetailByLocation() {
+        document.querySelector("#error").innerHTML = "";
       if (!navigator.geolocation) {
         showError("Geolocation is not supported by your browser.");
         return;
@@ -64,6 +102,7 @@
           return response.json();
         })
         .then(data => {
+          
           showWeather(data);
           console.log(data);
           console.log(data.list[0].weather[0].main);
@@ -73,9 +112,7 @@
         });
        }
 
-      function displayError(message){
-        document.querySelector("#error").innerHTML = message;
-      }
+      
      const searchBtn = document.querySelector("#searchBtn");
      const locationBtn = document.querySelector("#locationBtn");
      searchBtn.addEventListener("click",()=>{
@@ -83,15 +120,32 @@
      });
      locationBtn.addEventListener("click",()=>{
       weatherDetailByLocation();
-     })   
+     })  
+     
+     function changeImage(data){
+      const weatherImage = document.querySelector("#weather-icon");
+
+      console.log(weatherImage);
+      if(data.list[0].weather[0].main=="Clear"){
+        weatherImage.src = "images/clear.png";
+      }
+
+      // weatherImage.classList.add("max-w-[30px]");
+      }
 
      function showWeather(data){
+      document.querySelector("#error").innerHTML = "";
+      document.querySelector("#main-information").classList.remove("hidden");
       document.querySelector("#main-information h1").textContent = `${data.city.name}, ${new Date(data.list[0].dt_txt).toDateString()}`;
-      function changeImage(data){
-        console.log(data.city.name);
-      }
-      changeImage(data);
+      document.querySelector("#mainImg").src ="images/clear.png";
+      document.querySelector("#weatherStatus").textContent = `${data.list[0].weather[0].main}`;
+      document.querySelector("#mainTemp").textContent =`${Math.round(data.list[0].main.temp)}°C`;
+      
      }
+     function displayError(message){
+        document.querySelector("#error").innerHTML = message;
+        document.querySelector("#main-information").classList.add("hidden");
+      }
     </script>
   </body>
 </html>
