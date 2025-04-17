@@ -26,7 +26,7 @@
             </section>
 
             <!-- weather information display --------------  -->
-             <section id="main-information" class="mt-4 hidden">
+             <section id="main-information" class="mt-6">
                 <article>
                   <h1 class="font-bold text-xl md:text-3xl text-center  text-[#6c6a6a]"></h1>
                   <p id="date" class="mx-auto text-[#6c6a6a] text-[12px] font-bold mt-1 text-center"></p>
@@ -50,7 +50,22 @@
 
                   </div>
                 </article>
-                
+                <article>
+                  <h2 class="font-bold text-2xl text-center my-4">5-Day Forecast</h2>
+                  <div id="forecast5" class="flex gap-4 justify-center items-center flex-wrap">
+                    <!-- <div class="text-center border border-gray-300 p-4 rounded-md bg-blue-50 shadow-md">
+                      <p class="text-[#6c6a6a] font-bold">15 April 2025</p>
+                      <img src="images/clear.png" alt="" class="w-16 mx-auto">
+                      <p>Clear, 28 C</p>
+                      <p>Humidity 50%</p>
+                      <p>wind:5 km/hr</p>
+                    </div> -->
+                    
+                    
+                    
+                    
+                  </div>
+                </article>
              </section>
         </main>
     </div>
@@ -97,7 +112,9 @@
           
           showWeather(data);
           console.log(data);
-          console.log(data.list[0].weather[0].main);
+          // console.log(data.list[0].weather[0].main);
+          
+          
         })
         .catch(error => {
           displayError(error.message);
@@ -133,6 +150,26 @@
       
       }
 
+
+      function changeImagePath(item){
+      if(item.weather[0].main=="Clear"){
+        return "images/clear.png";
+      }
+      else if(item.weather[0].main=="Clouds"){
+        return "images/clouds.png";
+      } 
+      else if(item.weather[0].main=="Rain"){
+        return "images/rain.png";
+      }
+      else if(item.weather[0].main=="drizzle"){
+        return "images/drizzle.png";
+      }
+      else if(item.weather[0].main=="Mist"){
+        return "images/mist.png";
+      }
+      
+      }
+
     
 
      function showWeather(data){
@@ -144,9 +181,45 @@
       
       document.querySelector("#weatherStatus").textContent = `${data.list[0].weather[0].main}`;
       document.querySelector("#mainTemp").textContent =`${Math.round(data.list[0].main.temp)}°C`;
-      document.querySelector("#humidity").textContent = `Humidity : ${data.list[0].main.humidity} %`;
+      document.querySelector("#humidity").textContent = `Humidity : ${data.list[0].main.humidity}%`;
       document.querySelector("#windSpeed").textContent = `Wind : ${data.list[0].wind.speed} km/hr`;
       
+      // 5 days forecast  
+      const forecast5 = document.querySelector("#forecast5"); 
+      forecast5.innerHTML = "";
+
+      const forecastList = data.list.filter(item => item.dt_txt.includes("12:00:00"));
+      console.log(forecastList);
+      forecastList.slice(0,5).forEach(item=>{
+        const element = document.createElement("div");
+        let imgpath=changeImagePath(item);
+        element.className = "text-center border border-gray-300 p-4 rounded-md bg-red-50 shadow-md";
+        element.innerHTML = `
+                      <p class="text-[#6c6a6a] font-bold">${new Date(item.dt_txt).toDateString()}</p>
+                      <img id="forecastImg" src=${imgpath} alt="" class="w-16 mx-auto">
+                      <p>${item.weather[0].main}, ${item.main.temp} C</p>
+                      <p><i class="fa-solid fa-droplet text-[#807979]"></i> Humidity : ${item.main.humidity}%</p>
+                      <p><i class="fa-solid fa-wind ml-1.5 text-[#575555] w-1"></i>Wind : ${item.wind.speed} km/hr</p>
+                    `;
+                    
+        forecast5.appendChild(element);            
+      })
+
+      // forecastList.slice(0, 5).forEach(item => {
+      //   const card = document.createElement("div");
+      //   card.className = "bg-blue-200 rounded-xl p-4 shadow";
+
+      //   card.innerHTML = `
+      //     <p class="font-semibold">${new Date(item.dt_txt).toDateString()}</p>
+      //     <p>🌡️ Temp: ${item.main.temp}°C</p>
+      //     <p>🌥️ Weather: ${item.weather[0].main}</p>
+      //     <p>💧 Humidity: ${item.main.humidity}%</p>
+      //   `;
+
+      //   forecast5.appendChild(card);
+      // });
+
+
      }
      function displayError(message){
         document.querySelector("#error").innerHTML = message;
