@@ -8,25 +8,26 @@
     <!-- <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script> -->
   </head>
   <body class="bg-green-100 min-h-screen">
-    <div class=" bg-white w-[90%] md:max-w-[680px] lg:max-w-[720px] shadow-md mx-auto py-6 my-16 rounded-2xl px-8">
+    <div class=" bg-white w-[90%] md:max-w-[680px] lg:max-w-[720px] shadow-md mx-auto py-12 my-16 rounded-2xl px-8">
         <header class="text-center mb-7 mt-3 md:mt-1">
             <strong class="text-2xl  md:text-3xl lg:text-3xl">Weather Forecast App</strong>
         </header>
         <main>
             <!-- searchbox-------------- -->
             <section class="text-center">
-              <div class="flex gap-2 mt-4">
+              <div class="flex gap-2 mt-4 relative">
                 <input id="cityName" type="text" list="recentSearches" spellcheck="false" placeholder="Enter a City Name" class="w-full pl-3 border-[0.5px] border-gray-300 rounded-md focus:outline-none focus:border-2 focus:border-blue-500">
                 <datalist id="recentSearches"></datalist>
                 <button id="searchBtn" class="bg-blue-500 cursor-pointer  px-4 sm:px-8 py-2 rounded-md text-white font-semibold sm:font-bold">Search</button>
               </div>
+              <div id="suggestions" class="absolute left-0 right-0 mt-1 border border-gray-200 rounded-lg bg-white shadow-sm hidden z-10"></div>
               <p class="text-center text-black mt-1">or</p>
               <button id="locationBtn" class="w-full cursor-pointer rounded-md bg-green-400 mt-1 px-8 py-2 text-white font-semibold sm:font-bold">Use Current Location</button>
               <div id="error" class="text-red-500 text-center mt-3"></div>
             </section>
 
             <!-- weather information display --------------  -->
-             <section id="main-information" class="mt-6 hidden">
+             <section id="main-information" class="mt-12 hidden">
                 <article>
                   <h1 class="font-bold text-2xl md:text-3xl text-center  text-[#6c6a6a]"></h1>
                   <p id="date" class="mx-auto text-[#6c6a6a] text-[12px] font-bold mt-1 text-center"></p>
@@ -73,6 +74,44 @@
 
 
     <script>
+
+
+
+
+     // Manage Recent Searches
+function updateRecentSearches(city) {
+  let recent = JSON.parse(localStorage.getItem("recentCities")) || [];
+
+  // Remove if already exists, then add to front
+  recent = recent.filter(item => item.toLowerCase() !== city.toLowerCase());
+  recent.unshift(city);
+
+  // Keep only the latest 3
+  recent = recent.slice(0, 3);
+
+  localStorage.setItem("recentCities", JSON.stringify(recent));
+  populateDatalist();
+}
+
+function populateDatalist() {
+  const dataList = document.getElementById("recentSearches");
+  dataList.innerHTML = "";
+
+  const recent = JSON.parse(localStorage.getItem("recentCities")) || [];
+
+  recent.forEach(city => {
+    const option = document.createElement("option");
+    option.value = city;
+    dataList.appendChild(option);
+  });
+}
+
+
+
+
+
+
+
 
      
 
@@ -125,9 +164,20 @@
       
      const searchBtn = document.querySelector("#searchBtn");
      const locationBtn = document.querySelector("#locationBtn");
-     searchBtn.addEventListener("click",()=>{
-        weatherDetailsByCityName();
-     });
+    //  searchBtn.addEventListener("click",()=>{
+    //     weatherDetailsByCityName();
+    //  });
+
+
+    searchBtn.addEventListener("click", () => {
+  const city = document.querySelector("#cityName").value.trim();
+  if (city) {
+    updateRecentSearches(city);
+    weatherDetailsByCityName();
+  }
+});
+
+
      locationBtn.addEventListener("click",()=>{
       weatherDetailByLocation();
      })  
@@ -226,6 +276,7 @@
         document.querySelector("#error").innerHTML = message;
         document.querySelector("#main-information").classList.add("hidden");
       }
+      populateDatalist();
     </script>
   </body>
 </html>
