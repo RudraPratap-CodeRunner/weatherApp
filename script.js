@@ -1,6 +1,5 @@
 // functionality to display top three searches using localStorage
 
-
 // Manage Recent Searches
 function updateRecentSearches(city) {
   let recent = JSON.parse(localStorage.getItem("recentCities")) || [];
@@ -31,11 +30,11 @@ function populateDatalist() {
 
 apiKey = "a692e3a8f846f51cc3ea078b252d8caa";
 
-// function to get weather data by city name 
+// function to get weather data by city name
 function weatherDetailsByCityName() {
   document.querySelector("#error").innerHTML = "";
   const city = document.querySelector("#cityName").value.trim();
-//   handling empty searches 
+  //   handling empty searches
   if (!city) {
     displayError("Plaese enter a city name");
     return;
@@ -46,7 +45,7 @@ function weatherDetailsByCityName() {
   );
 }
 
-// function to get weather data uisng current location 
+// function to get weather data uisng current location
 function weatherDetailByLocation() {
   document.querySelector("#error").innerHTML = "";
   if (!navigator.geolocation) {
@@ -64,7 +63,7 @@ function weatherDetailByLocation() {
   );
 }
 
-// asynchrously fetching weather data 
+// asynchrously fetching weather data
 function getWeatherData(url) {
   fetch(url)
     .then((response) => {
@@ -84,18 +83,17 @@ function getWeatherData(url) {
 const searchBtn = document.querySelector("#searchBtn");
 const locationBtn = document.querySelector("#locationBtn");
 
-// click event using eventListner on serach button 
+// click event using eventListner on serach button
 searchBtn.addEventListener("click", () => {
   weatherDetailsByCityName();
 });
 
-// click event on serch by location button 
+// click event on serch by location button
 locationBtn.addEventListener("click", () => {
   weatherDetailByLocation();
 });
 
-
-// function to change weather image on main dashboard based on weather condition 
+// function to change weather image on main dashboard based on weather condition
 function changeImage(data) {
   if (data.list[0].weather[0].main == "Clear") {
     document.querySelector("#mainImg").src = "images/clear.png";
@@ -110,8 +108,7 @@ function changeImage(data) {
   }
 }
 
-
-// function to chnage image on 5 day forecast cards 
+// function to chnage image on 5 day forecast cards
 function changeImagePath(item) {
   if (item.weather[0].main == "Clear") {
     return "images/clear.png";
@@ -126,7 +123,7 @@ function changeImagePath(item) {
   }
 }
 
-// function to display weather data 
+// function to display weather data
 function showWeather(data) {
   document.querySelector("#error").innerHTML = "";
   document.querySelector("#main-information").classList.remove("hidden");
@@ -184,11 +181,11 @@ function showWeather(data) {
   });
 }
 
-// function to handle error message 
+// function to handle error message
 function displayError(message) {
   document.querySelector("#error").innerHTML = message;
   document.querySelector("#main-information").classList.add("hidden");
 }
 
-// functon called to add recent searched cities to local storage 
+// functon called to add recent searched cities to local storage
 populateDatalist();
